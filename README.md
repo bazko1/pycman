@@ -4,5 +4,5 @@ Written in python3
 - Dependencies: ??
 - Code should be commented using google docs style:
 https://google.github.io/styleguide/pyguide.html
-- pylint should be used when working with code
-
+- pylint should be used when working with code :
+ex. python3 -m pylint --rcfile .pylintrc src/board.py
