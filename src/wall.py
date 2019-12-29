@@ -1,0 +1,2 @@
+class Wall(Field):
+    pass

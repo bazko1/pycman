@@ -1,0 +1,2 @@
+class GhostRed(Movable):
+    pass

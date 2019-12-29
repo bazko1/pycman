@@ -1,0 +1,2 @@
+class GhostPink(Movable):
+    pass

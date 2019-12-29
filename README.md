@@ -1,0 +1,8 @@
+# Python implementation of pacman
+Written in python3
+- Using graphic library: #TODO: Decide which library
+- Dependencies: ??
+- Code should be commented using google docs style:
+https://google.github.io/styleguide/pyguide.html
+- pylint should be used when working with code
+
