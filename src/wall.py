@@ -1,2 +1,5 @@
+from .field import Field
+
 class Wall(Field):
-    pass
+    def __init__(self, x = None, y = None):
+        Field(x, y)

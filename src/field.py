@@ -1,8 +1,8 @@
 class Field:
-    def __init__(self):
-        self.x = None
-        self.y = None
-        pass
+    def __init__(self, x = None, y = None):
+        self.x = x
+        self.y = y
+    
     def getCords(self):
         return self.x, self.y
 

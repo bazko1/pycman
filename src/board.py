@@ -1,9 +1,11 @@
+from .wall import Wall
+from .food import Food
+
 class Board:
     """Pacman game board"""
 
-    def __init__(self, size):
-        self.board = [[]] * size
-        raise NotImplementedError()
+    def __init__(self, rows, cols):
+        self._board = [[0] * cols] * rows
 
     @classmethod
     def from_array(cls, arr):
@@ -11,14 +13,23 @@ class Board:
 
         1 - means that field should be wall object
         0 - walkable space with food - can be normal - can be extra one
-        (#TODO Decide if there is some randomnes here or its changed in another method)
 
         Args:
             arr: array with 0 and 1
 
 
         """
-        raise NotImplementedError()
+        rowN = len(arr)
+        colN = len(arr[0])
+        board = Board(rowN, colN)
+        for row in range(rowN):
+            for col in range(colN):
+                if arr[row][col] == 1:
+                    board._board[row][col] = Wall(col, row)
+                else:
+                    board._board[row][col] = Food(col, row)
+        
+        return board
 
     def set_characters(self, characters):
         """Fills board with characters objects.

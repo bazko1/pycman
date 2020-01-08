@@ -1,2 +1,3 @@
+
 class GhostBlue(Movable):
     pass

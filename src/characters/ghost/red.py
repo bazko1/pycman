@@ -1,2 +1,4 @@
 class GhostRed(Movable):
-    pass
+    def __init__(self):
+        pass
+    

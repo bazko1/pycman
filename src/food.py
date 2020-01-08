@@ -1,3 +1,5 @@
+from .field import Field
+
 class Food(Field):
-    def __init__(self):
-        pass
+    def __init__(self, x = None, y = None):
+        Field(x, y)
