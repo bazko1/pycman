@@ -1,5 +1,5 @@
-from .field import Field
+from .point import Point
 
-class Food(Field):
+class Food(Point):
     def __init__(self, x = None, y = None):
-        Field(x, y)
+        Point(x, y)

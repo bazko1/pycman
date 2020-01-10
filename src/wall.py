@@ -1,5 +1,5 @@
-from .field import Field
+from .point import Point
 
-class Wall(Field):
+class Wall(Point):
     def __init__(self, x = None, y = None):
-        Field(x, y)
+        Point(x, y)

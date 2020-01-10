@@ -1,2 +1,8 @@
+from src.movable import Movable
+
+
 class GhostYellow(Movable):
-    pass
+    def __init__(self):
+        pass
+    def step(self):
+        pass

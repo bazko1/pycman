@@ -1,6 +1,7 @@
 #/usr/bin/python3
-import src.game as game
+import src as game
 
+# print(dir(game))
 game = game.Game()
 
 game.start()

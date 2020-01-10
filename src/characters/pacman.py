@@ -1,3 +1,6 @@
+from src.movable import Movable
+
+
 class Pacman(Movable):
     def __init__(self):
         self.eatenFood = 0
