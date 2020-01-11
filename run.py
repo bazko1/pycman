@@ -1,4 +1,4 @@
-#/usr/bin/python3
+#/usr/local/bin/python3.8
 import src as game
 
 # print(dir(game))

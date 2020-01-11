@@ -13,7 +13,10 @@ class Game:
 
   """
   def __init__(self):
+    
     self.board = Board.from_array(testMap)
+    
+    pass
     Ghost = characters_factory.new_ghost
 
     self.characters = {"Blue": Ghost("Blue"),
@@ -29,18 +32,31 @@ class Game:
       self.board.set_character(c)
       c.set_other_movable(self.characters)
 
+    #TODO: Remove - test if pacman walks correctly right and stops on wall
+    self.characters["Pacman"].x_vel = 1
 
   def step(self):
     """Performs one tick of a game, updating all its objects"""
-    for c in charcters:
+    for name, character in self.characters.items():
 
-        c.step()
+        newCords = character.step()
+        if name == "Pacman":
+          print('pacman new x,y = ', newCords)
+          self.calculate_score(character)
 
-        if c == Pacman():
-          self.calculateScore(c.getEaten())
-
-    graphics.update()
+    # graphics.update()
 
 
   def start(self):
+    for i in range(5): #This loop will be changed for while this is for inital tests
+      self.step()
+      
+      # temporary until we do not use graphics lib yet
+      import time
+      time.sleep(1)
+    
+
+  def calculate_score(self, pacman):
+    """Calculates overall score based upon food pacman ate."""
+    #TODO:
     pass
