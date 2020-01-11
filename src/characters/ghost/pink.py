@@ -2,8 +2,8 @@ from src.movable import Movable
 
 
 class GhostPink(Movable):
-    pass
     def __init__(self):
-        pass
+        Movable.__init__(self, 0, 0)
+        
     def step(self):
         pass

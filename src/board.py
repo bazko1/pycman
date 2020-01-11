@@ -16,7 +16,7 @@ class Board:
 
         1 - means that field should be wall object
         0 - walkable space with food, and space for movable object 
-            Tuple (movable, Food)
+            Tuple (Movable, Food)
 
         Args:
             arr: array with 0 and 1
@@ -35,15 +35,17 @@ class Board:
         
         return board
 
-    def set_characters(self, characters):
-        """Fills board with characters objects.
+    def set_character(self, character):
+        """Fills board with character object.
 
         Characters should have x, y coordinates.
-        Will iterate over cords and set reference to objects in its array.
-
+        
         Args:
-            characters: array of objects with x, y fields.
+            character: array of objects with x, y fields.
 
         """
+        col, row = character.getCords()
+        self._arr[row][col] = self._arr[row][col]._replace(character=character)
 
-        raise NotImplementedError()
+    def update(character):
+        pass
