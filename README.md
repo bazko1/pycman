@@ -6,3 +6,4 @@ Written in python3
 https://google.github.io/styleguide/pyguide.html
 - pylint should be used when working with code :
 ex. python3 -m pylint --rcfile .pylintrc src/board.py
+- sprite from repo https://github.com/rm-hull/big-bang/tree/master/examples/pacman
