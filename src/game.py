@@ -1,5 +1,6 @@
 from .board import Board
 from .maps import TEST_MAP
+from .graphics.graphics import Graphics
 from src.characters import characters_factory
 
 class Game:
@@ -13,6 +14,8 @@ class Game:
 
     """
     def __init__(self):
+
+        self.graphics = Graphics()
 
         self.board = Board.from_array(TEST_MAP)
 
