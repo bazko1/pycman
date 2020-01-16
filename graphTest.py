@@ -7,25 +7,41 @@ locations = {"pacman": {
                         (0, 1) : [(458, 0, 89, 89), (641, 0, 89, 89)],
                         (-1, 0) : [(0, 0, 75, 89), (173, 0, 88, 88)],
                         (0, -1) : [(77, 0, 89, 89) ,(265, 0, 89, 89)]
+                       },
+            
+            "pink": {
+                        (1, 0) : [(1, 0, 86, 89), (94, 0, 86, 89)],
+                        (0, 1) : [(188, 0, 86, 89), (282, 0, 86, 89)],
+                        (-1, 0) : [(375, 0, 86, 88) ,(470, 0, 86, 89)],
+                        (0, -1) : [(564, 0, 86, 89), (658, 0, 86, 89)]
+                        
                        }
 
+            
             }
 
 class Game:
     def __init__(self):
         pygame.init()
-        path = os.path.join(os.getcwd(), "data/baz/pacman.png")
+        # path = os.path.join(os.getcwd(), "data/baz/pacman.png")
+        path = os.path.join(os.getcwd(), "data/baz/pacman_pink.png")
         self.screen = pygame.display.set_mode((BOARD_HEIGHT, BOARD_WIDTH))
-        self.image = pygame.image.load(path)
+        image1 = pygame.image.load(path)
+        
+        path = os.path.join(os.getcwd(), "data/baz/pacman.png")
+        image2 = pygame.image.load(path)
         # self.screen.fill((255,255,255))
-        self.c1 = self.get_character_images("pacman", (1, 0))
-        self.c2 = self.get_character_images("pacman", (0, 1))
-        self.c3 = self.get_character_images("pacman", (-1, 0))
-        self.c4 = self.get_character_images("pacman", (0, -1))
-        # self.c = c1
+        # self.c1 = self.get_character_images("pacman", (1, 0))
+        # self.c2 = self.get_character_images("pacman", (0, 1))
+        # self.c3 = self.get_character_images("pacman", (-1, 0))
+        # self.c4 = self.get_character_images("pacman", (0, -1))
+        self.p = [self.get_character_images("pacman", k, image2) for k in locations["pacman"].keys()]
         # c = [(surface, (id * 89, 0)) for id, surface in enumerate(c)]
-        self.screen.blit(self.c1[1], (0,0))
-        self.curr = [0,0]
+        self.curr = [80,0]
+        self.screen.blit(self.p[0][0], self.curr)
+        
+        self.g = [self.get_character_images("pink", k, image1) for k in locations["pacman"].keys()]
+        
         pygame.display.update()
         prev = None
         s = pygame.Surface((89, 89))
@@ -34,8 +50,8 @@ class Game:
         self.prev = []
         self.index = 0
         self.stepNR = 20
-    def get_character_images(self, name, velocity):
-        return [self.image.subsurface(rect) for rect in locations[name][velocity]]
+    def get_character_images(self, name, velocity, image):
+        return [image.subsurface(rect) for rect in locations[name][velocity]]
 
 
 
@@ -66,19 +82,19 @@ class Game:
         
         if i < 20:
             self.curr[0] += self.stepNR
-            self.c = self.c1
+            p = self.p[0]
         elif i < 40:
             self.curr[1] += self.stepNR
-            self.c = self.c2
+            p = self.p[1]
         elif i < 60:
             self.curr[0] -= self.stepNR
-            self.c = self.c3
+            p = self.p[2]
         elif i < 80:
             self.curr[1] -= self.stepNR
-            self.c = self.c4
+            p = self.p[3]
             
 
-        blit.append((self.c[self.index], self.curr))
+        blit.append((p[self.index], self.curr))
         self.index+=1
         self.index%=2
         
