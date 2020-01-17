@@ -30,28 +30,28 @@ class Game:
         
         path = os.path.join(os.getcwd(), "data/baz/pacman.png")
         image2 = pygame.image.load(path)
-        # self.screen.fill((255,255,255))
-        # self.c1 = self.get_character_images("pacman", (1, 0))
-        # self.c2 = self.get_character_images("pacman", (0, 1))
-        # self.c3 = self.get_character_images("pacman", (-1, 0))
-        # self.c4 = self.get_character_images("pacman", (0, -1))
-        self.p = [self.get_character_images("pacman", k, image2) for k in locations["pacman"].keys()]
-        # c = [(surface, (id * 89, 0)) for id, surface in enumerate(c)]
-        self.curr = [80,0]
-        self.screen.blit(self.p[0][0], self.curr)
         
+        self.p = [self.get_character_images("pacman", k, image2, (40, 40)) for k in locations["pacman"].keys()]
+        
+        
+        self.curr = [80,0]
+        
+        self.screen.blit(self.p[0][0], self.curr)
         self.g = [self.get_character_images("pink", k, image1) for k in locations["pacman"].keys()]
         
         pygame.display.update()
         prev = None
-        s = pygame.Surface((89, 89))
+        s = pygame.Surface((40, 40))
         s.fill((0, 0, 0))
         self.base_rect = s
         self.prev = []
         self.index = 0
         self.stepNR = 20
-    def get_character_images(self, name, velocity, image):
-        return [image.subsurface(rect) for rect in locations[name][velocity]]
+    def get_character_images(self, name, velocity, image, resize=None):
+        out = [image.subsurface(rect) for rect in locations[name][velocity]]
+        if resize is not None:
+            out = [pygame.transform.scale(surface, resize) for surface in out]
+        return out
 
 
 
@@ -75,8 +75,6 @@ class Game:
     def step(self, i):
         blit = []
         
-        
-        # if self.index % 2 ==1:
         self.prev = self.curr.copy()
         blit.append( (self.base_rect, self.prev) )
         
