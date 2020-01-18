@@ -1,6 +1,8 @@
 import pygame, os
 from .defines import part_locations
+from collections import namedtuple
 
+FoodConfig = namedtuple('FoodConfig', ['small_size', 'big_size', 'small_offset', 'big_offset'])
 # screen offset for score printing
 hOffupset = 80
 
@@ -51,9 +53,12 @@ class Graphics:
 
         food_path = os.path.join(os.getcwd(), "data/baz/food.png")
         food_image = pygame.image.load(food_path)
-        food_small = pygame.transform.scale(food_image.subsurface((0, 16, 16, 16)), (5, 5))
-
-        food_big = pygame.transform.scale(food_image.subsurface((88, 6, 34, 34)), (16, 16))
+        self.food_conf = FoodConfig((5, 5), (16, 16), 7, 2)
+        # TODO: Add food coords to defines
+        food_small = pygame.transform.scale(food_image.subsurface((0, 16, 16, 16)), self.food_conf[0])
+        food_big = pygame.transform.scale(food_image.subsurface((88, 6, 34, 34)), self.food_conf[1])
+        self.food_small = food_small
+        self.food_big = food_big
 
         f = open(os.path.join(os.getcwd(), "data/map.txt"), "r")
         data = f.read().splitlines()
@@ -64,9 +69,11 @@ class Graphics:
                     # pygame.draw.rect(map_surface, (255, 255, 255), (x * 20, y * 20, food_image, base_rect_size, base_rect_size), 1)
 
                     if value == ".":
-                        map_surface.blit(food_small, (x * 20 + 7, y * 20 + 7))
+                        map_surface.blit(food_small, (x * 20 + self.food_conf.small_offset, 
+                                                      y * 20 + self.food_conf.small_offset))
                     elif value == "o":
-                        map_surface.blit(food_big, (x * 20 + 2, y * 20 + 2))
+                        map_surface.blit(food_big, (x * 20 + self.food_conf.big_offset,
+                                                    y * 20 + self.food_conf.big_offset))
 
 
         self.screen.blit(map_surface, (0, hOffupset))
@@ -118,8 +125,8 @@ class Graphics:
             out = [pygame.transform.scale(surface, resize) for surface in out]
         return out
 
-    def screen_position(self, x, y):
-        return (x * base_rect_size, y * base_rect_size + hOffupset)
+    def screen_position(self, x, y, offset=0):
+        return (x * base_rect_size + offset, y * base_rect_size + offset + hOffupset)
 
     def draw_character(self, character):
         """Draws character, will access its x, y coordinates"""
@@ -127,13 +134,24 @@ class Graphics:
         prev = character.get_prev()
         to_blit = []
         if None not in prev:
-            to_blit.append((self.black_rect, self.screen_position(*prev)))
+            # if character.isghost or pacman or cherry
+            # to_blit.append((self.black_rect, self.screen_position(*prev)))
+            self.redraw_food(*prev)
 
         velocity = character.get_velocity()
         animation = self.animations[character.name][velocity]
         screen_position = self.screen_position(x, y)
         to_blit.append((animation[self.animation_state], screen_position))
         self.screen.blits(to_blit)
+
+    def redraw_food(self, x, y, small=True):
+        to_blit = []
+        offset = self.food_conf.small_offset if small else self.food_conf.big_offset
+        food = self.food_small
+        to_blit.append((self.black_rect, self.screen_position(x, y)))
+        to_blit.append((food, self.screen_position(x, y, offset)))
+        self.screen.blits(to_blit)
+
 
     def redraw_board(self, board, coordinates=None):
         """Redraws full board or specific points on it

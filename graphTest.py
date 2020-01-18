@@ -60,17 +60,17 @@ class Game:
         self.draw_map()
 
         # self.p = [self.get_character_images("pacman", k, image2, (40, 40)) for k in locations["pacman"].keys()]
-        self.p = [self.get_character_images("pacman", k, image2, (30, 30)) for k in locations["pacman"].keys()]
+        self.p = [self.get_character_images("pacman", k, image2, (26, 26)) for k in locations["pacman"].keys()]
 
 
-        self.curr = [15, 15]
+        self.curr = [20, hOffupset + 20]
 
-        # self.screen.blit(self.p[0][0], self.curr)
+        self.screen.blit(self.p[0][0], self.curr)
         # self.g = [self.get_character_images("pink", k, image1) for k in locations["pacman"].keys()]
 
         pygame.display.update()
         prev = None
-        s = pygame.Surface((30, 30))
+        s = pygame.Surface((26, 26))
         s.fill((0, 0, 0))
         self.base_rect = s
         self.prev = []
@@ -129,25 +129,25 @@ class Game:
 
             self.step(i)
             i+=1
-            i%=32
+            i%=30
             pygame.display.update()
 
     def step(self, i):
         blit = []
-        return
+        # return
         self.prev = self.curr.copy()
         blit.append( (self.base_rect, self.prev) )
 
-        if i < 12:
+        if i < 11:
             self.curr[0] += self.stepNR
             p = self.p[0]
-        elif i < 16:
+        elif i < 15:
             self.curr[1] += self.stepNR
             p = self.p[1]
-        elif i < 28:
+        elif i < 26:
             self.curr[0] -= self.stepNR
             p = self.p[2]
-        elif i < 32:
+        elif i < 30:
             self.curr[1] -= self.stepNR
             p = self.p[3]
 
