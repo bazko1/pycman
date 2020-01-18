@@ -1,9 +1,7 @@
+import pygame, sys, os
 from .board import Board
-from .maps import TEST_MAP
 from .graphics.graphics import Graphics
 from src.characters import characters_factory
-import pygame
-import time
 
 class Game:
     """Class joining game logic and graphics. Started should output fully playable game.
@@ -17,61 +15,67 @@ class Game:
     """
     def __init__(self):
 
-        self.graphics = Graphics()
+        pygame.init()
 
-        self.board = Board.from_array(TEST_MAP)
-
+        maze = os.path.join(os.getcwd(), "data/map.txt")
+        self.board = Board.from_file(maze)
+        
         Ghost = characters_factory.new_ghost
 
-        self.characters = {"Blue": Ghost("Blue"),
-                           "Red": Ghost("Red"),
-                           "Pink": Ghost("Pink"),
-                           "Yellow": Ghost("Yellow"),
-                           "Pacman": characters_factory.Pacman(),
-                           "Cherry": characters_factory.Cherry()
+        self.characters = {"blue": Ghost("Blue"),
+                           "red": Ghost("Red"),
+                           "pink": Ghost("Pink"),
+                           "orange": Ghost("Orange"),
+                           "pacman": characters_factory.Pacman(),
+                           "cherry": characters_factory.Cherry()
                           }
 
         for c in self.characters.values():
             c.set_board(self.board)
-            self.board.set_character(c)
             c.set_other_movable(self.characters)
+
+        #TODO: Remove - test if pacman walks correctly right and stops on wall
+        self.characters["pacman"].x_vel = 1
+
+        self.graphics = Graphics(self.characters, self.board)
+
 
     def step(self):
         """Performs one tick of a game, updating all its objects"""
         for name, character in self.characters.items():
 
             newCords = character.step()
-            if name == "Pacman":
-                print('pacman new x,y = ', newCords)
+            if name == "pacman":
+                # print('pacman x, y',self.characters["pacman"].getCords())
                 self.calculate_score(character)
 
-      # graphics.update()
+        self.graphics.update()
 
 
     def start(self):
-        pygame.init()
-        screen = pygame.display.set_mode((240, 180))
+        self.clock = pygame.time.Clock()
         while True:
-            self.characters["Pacman"].x_vel = 0
-            self.characters["Pacman"].y_vel = 0
-            pygame.event.pump()
-            keys = pygame.key.get_pressed()
+            curr = pygame.time.get_ticks()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.characters["pacman"].x_vel = -1
+                        self.characters["pacman"].y_vel = 0
+                    elif event.key == pygame.K_RIGHT:
+                        self.characters["pacman"].x_vel = 1
+                        self.characters["pacman"].y_vel = 0
+                    elif event.key == pygame.K_DOWN:
+                        self.characters["pacman"].x_vel = 0
+                        self.characters["pacman"].y_vel = 1
+                    elif event.key == pygame.K_UP:
+                        self.characters["pacman"].x_vel = 0
+                        self.characters["pacman"].y_vel = -1
 
-            if keys[pygame.K_UP]:
-                self.characters["Pacman"].x_vel = 0
-                self.characters["Pacman"].y_vel = 1
-            elif keys[pygame.K_DOWN]:
-                self.characters["Pacman"].x_vel = 0
-                self.characters["Pacman"].y_vel = -1
-            elif keys[pygame.K_LEFT]:
-                self.characters["Pacman"].x_vel = -1
-                self.characters["Pacman"].y_vel = 0
-            elif keys[pygame.K_RIGHT]:
-                self.characters["Pacman"].x_vel = 1
-                self.characters["Pacman"].y_vel = 0
-
-            time.sleep(0.5)
             self.step()
+            self.clock.tick_busy_loop(8)
 
 
     def calculate_score(self, pacman):
