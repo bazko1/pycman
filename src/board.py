@@ -51,3 +51,10 @@ class Board:
     def is_wall(self, col, row):
         """Checks if board at x, y is Wall"""
         return isinstance(self._arr[row][col], Wall)
+
+    def is_not_eaten_food(self, col, row):
+        el = self._arr[row][col]
+        return isinstance(el, Food) and not el.eaten
+    
+    def get_element(self, col, row):
+        return self._arr[row][col]
