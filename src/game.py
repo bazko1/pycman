@@ -1,8 +1,9 @@
-import pygame, sys
 from .board import Board
 from .maps import TEST_MAP
 from .graphics.graphics import Graphics
 from src.characters import characters_factory
+import pygame
+import time
 
 class Game:
     """Class joining game logic and graphics. Started should output fully playable game.
@@ -16,7 +17,6 @@ class Game:
     """
     def __init__(self):
 
-        pygame.init()
         self.graphics = Graphics()
 
         self.board = Board.from_array(TEST_MAP)
@@ -36,34 +36,42 @@ class Game:
             self.board.set_character(c)
             c.set_other_movable(self.characters)
 
-        #TODO: Remove - test if pacman walks correctly right and stops on wall
-        self.characters["Pacman"].x_vel = 1
-        self.fps = 4 # frames/second
-        
-
-
     def step(self):
         """Performs one tick of a game, updating all its objects"""
         for name, character in self.characters.items():
 
             newCords = character.step()
             if name == "Pacman":
+                print('pacman new x,y = ', newCords)
                 self.calculate_score(character)
 
-        self.graphics.update()
+      # graphics.update()
 
 
     def start(self):
-        self.clock = pygame.time.Clock()
+        pygame.init()
+        screen = pygame.display.set_mode((240, 180))
         while True:
-            curr = pygame.time.get_ticks()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            
+            self.characters["Pacman"].x_vel = 0
+            self.characters["Pacman"].y_vel = 0
+            pygame.event.pump()
+            keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_UP]:
+                self.characters["Pacman"].x_vel = 0
+                self.characters["Pacman"].y_vel = 1
+            elif keys[pygame.K_DOWN]:
+                self.characters["Pacman"].x_vel = 0
+                self.characters["Pacman"].y_vel = -1
+            elif keys[pygame.K_LEFT]:
+                self.characters["Pacman"].x_vel = -1
+                self.characters["Pacman"].y_vel = 0
+            elif keys[pygame.K_RIGHT]:
+                self.characters["Pacman"].x_vel = 1
+                self.characters["Pacman"].y_vel = 0
+
+            time.sleep(0.5)
             self.step()
-            self.clock.tick_busy_loop(15)
 
 
     def calculate_score(self, pacman):

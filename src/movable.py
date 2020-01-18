@@ -35,6 +35,11 @@ class Movable(Point, metaclass=ABCMeta):
         newX, newY = self.x + self.x_vel, self.y + self.y_vel
         return newX, newY
 
+
+    @staticmethod
+    def closestPath(start , dest):
+        pass
+
     def hitsWall(self, x, y):
         """Checks if """
         pass
