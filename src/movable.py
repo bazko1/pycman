@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
+
 from .point import Point
-from src.characters.ghost.ghost import Ghost
 
 
 class Movable(Point, metaclass=ABCMeta):
@@ -49,9 +49,7 @@ class Movable(Point, metaclass=ABCMeta):
     def hitsWall(self, x, y):
         """Checks if """
         pass
-    
-    def is_ghost(self):
-        return isinstance(self, Ghost)
+
 
     def get_prev(self):
         return self.prev_x, self.prev_y
