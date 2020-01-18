@@ -5,7 +5,11 @@ class Pacman(Movable):
     def __init__(self):
         Movable.__init__(self, 13, 23)
         self.name = "pacman"
+        self.on_stereoids = 0
+        # 10 points
         self.eatenFood = 0
+        # 50 points and new behaviour
+        self.eatenSuperFood = 0
         self.eatenGhost = 0
         self.eatenCherry = 0
 
@@ -15,9 +19,18 @@ class Pacman(Movable):
         
         if self.board.is_not_eaten_food(self.x, self.y):
             self.eatenFood += 1
-            self.board.get_element(self.x, self.y).set_eaten()
+            food = self.board.get_element(self.x, self.y)
+            food.set_eaten()
+            if food.is_super:
+                # TODO: Set correct number of steps for pacman to be super
+                self.on_stereoids = 10
 
         if not self.board.is_wall(newX, newY):
             self.x, self.y = newX, newY
+
+        if self.on_stereoids > 0:
+            # TODO: Implement eating ghosts
+            self.on_stereoids -=1
+            pass
 
         return self.x, self.y
