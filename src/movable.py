@@ -6,6 +6,8 @@ class Movable(Point, metaclass=ABCMeta):
         Point.__init__(self, x, y)
         self.x_vel = 0
         self.y_vel = 0
+        self.prev_x = None
+        self.prev_y = None
         self.board = None
         self.other_movable = None
 
@@ -35,6 +37,12 @@ class Movable(Point, metaclass=ABCMeta):
         newX, newY = self.x + self.x_vel, self.y + self.y_vel
         return newX, newY
 
+    def get_velocity(self):
+        return self.x_vel, self.y_vel
+
     def hitsWall(self, x, y):
         """Checks if """
         pass
+    
+    def get_prev(self):
+        return self.prev_x, self.prev_y

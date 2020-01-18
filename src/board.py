@@ -14,43 +14,39 @@ class Board:
         self.len_col = len_col
 
     @classmethod
-    def from_array(cls, arr):
-        """Creates empty Board from array of 0 and 1's.
+    def from_file(cls, file):
+        """Creates empty Board from array of ' ', 1's and '.', 'o' characters.
 
         1 - means that field should be wall object
-        0 - walkable space with food, and space for movable object
-            Tuple (Movable, Food)
+        ' ' - walkable space
+        . - food normal
+        o - food extra
 
         Args:
-            arr: array with 0 and 1
+            arr: file with characters
 
 
         """
+        f = open(file, "r")
+        data = f.read().splitlines()
+        f.close()
 
-        row_number = len(arr)
-        col_number = len(arr[0])
+        row_number = len(data)
+        col_number = len(data[0])
         board = Board(row_number, col_number)
-        board._arr = [[Wall() if el == 1 else Field(None, Food()) for el in row] for row in arr]
+        board._arr = [[board.map_array_character(el) for el in row] for row in data]
 
         return board
 
-    def set_character(self, character):
-        """Fills board with character object.
-
-        Characters should have x, y coordinates.
-
-        Args:
-            character: array of objects with x, y fields.
-
-        """
-        col, row = character.getCords()
-
-
-        assert isinstance(self._arr[row][col], Field), f"You are trying to set character {character.__class__} on wall  x: {col}, y: {row}"
-        self._arr[row][col] = self._arr[row][col]._replace(character=character)
-
-    def update(character):
-        pass
+    def map_array_character(self, element):
+        mapping = {"1": (Wall, ()),
+                   ".": (Food , ()),
+                   "o": (Food , (True,)),
+                   ' ': (int, (0,))
+                  }
+        klass, args = mapping[element]
+        
+        return klass(*args)
 
     def is_wall(self, col, row):
         """Checks if board at x, y is Wall"""
