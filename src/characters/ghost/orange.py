@@ -15,6 +15,7 @@ class GhostOrange(Ghost):
         pacman = self.other_movable["pacman"]
         return (self.x - pacman.x) ** 2 + (self.y - pacman.y) ** 2 < self.r ** 2
 
+
     def chase_state_target(self):
         pacman = self.other_movable["pacman"]
         if not self.inside():
