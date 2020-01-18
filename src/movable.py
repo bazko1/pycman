@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from .point import Point
+from src.characters.ghost.ghost import Ghost
+
 
 class Movable(Point, metaclass=ABCMeta):
     def __init__(self, x: int = None, y: int = None):
@@ -48,5 +50,8 @@ class Movable(Point, metaclass=ABCMeta):
         """Checks if """
         pass
     
+    def is_ghost(self):
+        return isinstance(self, Ghost)
+
     def get_prev(self):
         return self.prev_x, self.prev_y

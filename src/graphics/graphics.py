@@ -40,7 +40,8 @@ class Graphics:
         """Draw initial maze look and characters on it"""
         self.draw_maze()
         self.load_characters_animations()
-        self.draw_character(self.characters['pacman'])
+        for character in ["red", "orange", "pink", "pacman"] : # TODO: Add blue
+            self.draw_character(self.characters[character])
         pygame.display.update()
 
     def draw_maze(self):
@@ -102,7 +103,7 @@ class Graphics:
 
         # TODO: Add blue when blue.png ready
         # characters =  self.characters.keys()
-        characters = ["pacman", "pink", "red", "orange"]
+        characters = ["pacman", "pink", "red", "orange", ] # "blue"
         locations = part_locations
 
         for character in characters:
