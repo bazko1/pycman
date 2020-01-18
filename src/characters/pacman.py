@@ -12,6 +12,7 @@ class Pacman(Movable):
     def step(self):
         newX, newY = super().step()
         self.prev_x, self.prev_y = self.x, self.y
+        
         if not self.board.is_wall(newX, newY):
             self.x, self.y = newX, newY
         

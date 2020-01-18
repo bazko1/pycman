@@ -35,6 +35,10 @@ class Movable(Point, metaclass=ABCMeta):
 
         """
         newX, newY = self.x + self.x_vel, self.y + self.y_vel
+        if newX == self.board.len_col:
+            newX = 0
+        elif newX == -1:
+            newX = self.board.len_col - 1
         return newX, newY
 
     def get_velocity(self):

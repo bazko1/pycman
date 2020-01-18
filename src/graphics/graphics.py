@@ -1,6 +1,8 @@
 import pygame, os
 from .defines import part_locations
 from collections import namedtuple
+from src.characters import characters_factory
+
 
 FoodConfig = namedtuple('FoodConfig', ['small_size', 'big_size', 'small_offset', 'big_offset'])
 # screen offset for score printing
@@ -134,9 +136,12 @@ class Graphics:
         prev = character.get_prev()
         to_blit = []
         if None not in prev:
-            # if character.isghost or pacman or cherry
-            # to_blit.append((self.black_rect, self.screen_position(*prev)))
-            self.redraw_food(*prev)
+            if character.name in ["blue", "pink", "orange", "red", "cherry"]:
+                self.redraw_food(*prev)
+            else:
+                to_blit.append((self.black_rect, self.screen_position(*prev)))
+                to_blit.append((self.black_rect, self.screen_position(*prev)))
+
 
         velocity = character.get_velocity()
         animation = self.animations[character.name][velocity]

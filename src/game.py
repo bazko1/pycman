@@ -25,7 +25,7 @@ class Game:
         self.characters = {"blue": Ghost("Blue"),
                            "red": Ghost("Red"),
                            "pink": Ghost("Pink"),
-                           "yellow": Ghost("Yellow"),
+                           "orange": Ghost("Orange"),
                            "pacman": characters_factory.Pacman(),
                            "cherry": characters_factory.Cherry()
                           }
@@ -60,6 +60,19 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()
+                elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_LEFT:
+                        self.characters["pacman"].x_vel = -1
+                        self.characters["pacman"].y_vel = 0
+                    elif event.key == pygame.K_RIGHT:
+                        self.characters["pacman"].x_vel = 1
+                        self.characters["pacman"].y_vel = 0
+                    elif event.key == pygame.K_DOWN:
+                        self.characters["pacman"].x_vel = 0
+                        self.characters["pacman"].y_vel = 1
+                    elif event.key == pygame.K_UP:
+                        self.characters["pacman"].x_vel = 0
+                        self.characters["pacman"].y_vel = -1
 
             self.step()
             self.clock.tick_busy_loop(8)
