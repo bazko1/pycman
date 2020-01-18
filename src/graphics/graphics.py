@@ -1,16 +1,16 @@
 import pygame, os
+from .defines import part_locations
 
-BOARD_HEIGHT = 600
-BOARD_WIDTH = 600
+# screen offset for score printing
+hOffupset = 80
 
+# Maze is splitted in base_rect_size rects
+base_rect_size = 20
+# Size of main maze
+# It can be splited to 28 x 31 base rectangles
+BOARD_HEIGHT = 31 * base_rect_size  # 620
+BOARD_WIDTH = 28 * base_rect_size # 560
 
-class ImageSquarer():
-    def __init__(self):
-        pass
-    
-    def getSquare(self):
-        pass
-    
 
 class Graphics:
     """Graphics class for pacman
@@ -18,84 +18,122 @@ class Graphics:
        Should initialize all objects needed for used graphics library.
        Implements methods needed for game visualization.
     """
-    
-    def __init__(self):
-        
-        path = os.path.join(os.getcwd(), "data/1.png")
-        image = pygame.image.load(path)
-        self.image = image
-        rect = image.get_rect()
-        
-        
-        self.screen = pygame.display.set_mode((BOARD_HEIGHT, BOARD_WIDTH))
-        pygame.display.set_caption("pycman")
-        
-        
-        # p = self.get_image_square(0, 6, 2)
-        # cropRect = (1145, 670, 100, 100)
-        # p1 = self.get_image_square(12, 6)
-        # p2 = self.get_image_square(13, 6)
-        
-        # p3 = self.get_image_square(12, 7)
-        # p4 = self.get_image_square(13, 7)
 
-        # self.screen.blits( ( (p1,(300,300)), (p2,(347,300)), (p3,(300, 347)), (p4,(347, 347)) ) )
+    def __init__(self, characters, board):
+        self.characters = characters
+        self.board = board
         
-        # pacman300 = [(img, (pos[0]+300, pos[1] + 300)) for img, pos in self.get_bigger_image(8,6,2,2)]
-        s = pygame.Surface((47 * 2, 47 * 2))
-        s.fill((0, 0, 0))
-        i1 = ((s, (-47*2,-0)),*self.set_big_image_pos(self.get_bigger_image(8, 6, 2, 2), 0, 0))
+        self.screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT + hOffupset))
+        pygame.display.set_caption("pycman")
+        # Dictionary key is part name, value is either dictionary velocity : list of surfaces 
+        # or only list of surfaces, filled using load_characters_animations.
+        self.animations = {}
+        self.initialize_maze()
         
-        i2 = ((s, (0, 0)), *i1)
-        i3 = self.set_big_image_pos(self.get_bigger_image(12, 6, 2, 2), 0, 0)
         
-        self.update_array = [i1, i3, i2]
-        
-        # self.update_array += list(map(lambda x: self.set_big_image_pos(x, 47 * 2, 0), self.update_array))
-        
-        # self.update_array += list(map(lambda x: self.set_big_image_pos(x, 47 * 3, 0), self.update_array))
-        
-        self.index = 0
-        self. xpos = 0
+
+    def initialize_maze(self):
+        """Draw initial maze look and characters on it"""
+        self.draw_maze()
+        self.load_characters_animations()
+        self.draw_character(self.characters['pacman'])
+        pygame.display.update()
+
+    def draw_maze(self):
+        """Load and draw maze image, fill it with food
+
+           Array representation of map will be read and based upon that
+           food will be displayed.
+        """
+        map_path = os.path.join(os.getcwd(), "data/baz/map.jpg")
+        map_surface = pygame.image.load(map_path)
+        map_surface = pygame.transform.scale(map_surface, (BOARD_WIDTH, BOARD_HEIGHT))
+
+        food_path = os.path.join(os.getcwd(), "data/baz/food.png")
+        food_image = pygame.image.load(food_path)
+        food_small = pygame.transform.scale(food_image.subsurface((0, 16, 16, 16)), (5, 5))
+
+        food_big = pygame.transform.scale(food_image.subsurface((88, 6, 34, 34)), (16, 16))
+
+        f = open(os.path.join(os.getcwd(), "data/map.txt"), "r")
+        data = f.read().splitlines()
+        f.close()
+        for y, row in enumerate(data):
+                for x, value in enumerate(row):
+                    # For debuging draw rects
+                    # pygame.draw.rect(map_surface, (255, 255, 255), (x * 20, y * 20, food_image, base_rect_size, base_rect_size), 1)
+
+                    if value == ".":
+                        map_surface.blit(food_small, (x * 20 + 7, y * 20 + 7))
+                    elif value == "o":
+                        map_surface.blit(food_big, (x * 20 + 2, y * 20 + 2))
+
+
+        self.screen.blit(map_surface, (0, hOffupset))
 
     def update(self):
-        self.screen.blits(self.update_array[self.index])
-        self.index += 1
-        if self.index % len(self.update_array) == 0:
-            self.index = 0
-            if self.xpos < 5:
-                self.update_array = list(map(lambda x: self.set_big_image_pos(x, 47 * 2, 0), self.update_array))
-                self.xpos += 1
+        self.draw_character(self.characters['pacman'])
+        self.animation_state += 1
+        self.animation_state %= 2
         pygame.display.update()
+
+    def load_characters_animations(self):
+        """Fills dictionary with surfaces ready for each animation
         
+           Each character has supposedly has 4 types of animations (going left, right, up, down)
+        """
+        self.character_size = (26, 26)
+        
+        # Which animation should we display 
+        self.animation_state = 0
+        
+        # Black rect of base size to redraw character
+        self.black_rect = pygame.Surface(self.character_size)
+        self.black_rect.fill((0, 0, 0))
 
-    def get_image_square(self, x, y):
-        base_rect_size = 47
-        rect_size = base_rect_size
-        cropRect = (x * base_rect_size + 1 + x, y * base_rect_size + 1 + y, rect_size, rect_size)
-        return self.image.subsurface(cropRect)
+        # TODO: Add blue when blue.png ready
+        # characters =  self.characters.keys()
+        characters = ["pacman", "pink", "red", "orange"]
+        locations = part_locations
 
-    def get_bigger_image(self, image_x, image_y, w, h) :
-        image = []
-        x, y = image_x, image_y
-        for i in range(w):
-            for j in range(h):
-                image.append((self.get_image_square(x + i, y + j), (i * 47 ,j * 47)))
-        return image
-    
-    def set_big_image_pos(self, big_image, screen_x, screen_y):
-        out_image = [(img, (pos[0] + screen_x, pos[1] + screen_y)) for img, pos in big_image]
-        return out_image
+        for character in characters:
+            path = os.path.join(os.getcwd(), f"data/baz/{character}.png")
+            surface = pygame.image.load(path)
+            self.animations[character] = {
+             location: self.get_character_images(character, location, surface, self.character_size) 
+             for location in locations[character].keys()}
+        
+    def get_character_images(self, name, velocity, image, resize=None):
+        """Returs list of surfaces (animation)
+        
+            Args:
+                name: key in dictionary with specific parts of image location
+                velocity: representation of left, right ..
+                image: image to extract subimages from
+                resize: tuple (width, height) to resize to after extracting
+        
+        """
+        out = [image.subsurface(rect) for rect in part_locations[name][velocity]]
+        if resize is not None:
+            out = [pygame.transform.scale(surface, resize) for surface in out]
+        return out
 
-    def draw_board(self, board):
-        """Draw board might be called only once to draw full board"""
-        board.len_row
-        board.len_col
-        pass
+    def screen_position(self, x, y):
+        return (x * base_rect_size, y * base_rect_size + hOffupset)
 
     def draw_character(self, character):
         """Draws character, will access its x, y coordinates"""
-        pass
+        x, y = character.getCords()
+        prev = character.get_prev()
+        to_blit = []
+        if None not in prev:
+            to_blit.append((self.black_rect, self.screen_position(*prev)))
+
+        velocity = character.get_velocity()
+        animation = self.animations[character.name][velocity]
+        screen_position = self.screen_position(x, y)
+        to_blit.append((animation[self.animation_state], screen_position))
+        self.screen.blits(to_blit)
 
     def redraw_board(self, board, coordinates=None):
         """Redraws full board or specific points on it
