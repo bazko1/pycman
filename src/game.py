@@ -58,6 +58,8 @@ class Game:
     def start(self):
         self.clock = pygame.time.Clock()
         started = False
+        i = 0
+        self.board.open_gate()
         while True:
             curr = pygame.time.get_ticks()
             for event in pygame.event.get():
@@ -81,7 +83,14 @@ class Game:
             if started:
                 self.clock.tick_busy_loop(4)
                 self.step()
-            
+                if i < 21:
+                    i+=1
+                
+                if i == 20:
+                    #free another ghost wall y=12, x=13 , 14 dissapear
+                    # FIXME: If we open gate not instantly ghost do not leave box
+                    # self.board.open_gate()
+                    pass
 
 
     def calculate_score(self, pacman):

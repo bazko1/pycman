@@ -60,3 +60,19 @@ class Board:
     
     def get_element(self, col, row):
         return self._arr[row][col]
+
+    def open_gate(self):
+        """"Open ghosts gate
+        
+            Wall in coords (13, 12) becomes 0
+        """
+        print('OPEN THE GATE!')
+        self._arr[12][13] = 0
+        self._arr[12][14] = 0
+
+    def close_gate(self):
+        """"Close ghosts gate
+        
+            Wall in coords (13, 12) becomes Wall
+        """
+        self._arr[12][13] = Wall()

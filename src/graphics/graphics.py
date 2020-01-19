@@ -70,6 +70,7 @@ class Graphics:
         f = open(os.path.join(os.getcwd(), "data/map.txt"), "r")
         data = f.read().splitlines()
         f.close()
+        
         for y, row in enumerate(data):
                 for x, value in enumerate(row):
                     # For debuging draw rects
@@ -113,7 +114,7 @@ class Graphics:
 
         # TODO: Add blue when blue.png ready
         characters =  self.characters.keys()
-        characters = ["pacman", "pink", "red", "orange", "blue"] # TODO: cherry is not implemented yet
+        characters = ["pacman", "pink", "red", "orange", "blue", "eyes"] # TODO: cherry is not implemented yet
         locations = part_locations
 
         for character in characters:
@@ -156,7 +157,10 @@ class Graphics:
 
 
         velocity = character.get_velocity()
-        animation = self.animations[character.name][velocity]
+        if character.is_ghost() and character.is_eaten():
+            animation = self.animations["eyes"][velocity]
+        else:
+            animation = self.animations[character.name][velocity]
         screen_position = self.screen_position(x, y)
         to_blit.append((animation[self.animation_state], screen_position))
         self.screen.blits(to_blit)
