@@ -82,7 +82,7 @@ class Graphics:
         self.screen.blit(map_surface, (0, hOffupset))
 
     def update(self):
-        for character in ["red", "pacman"] : # TODO: Add blue
+        for character in ["red", "pacman", "orange", "pink"] : # TODO: Add blue
             self.draw_character(self.characters[character])
         # self.draw_character(self.characters['pacman'])
         self.animation_state += 1
