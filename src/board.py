@@ -50,6 +50,8 @@ class Board:
 
     def is_wall(self, col, row):
         """Checks if board at x, y is Wall"""
+        if col >= self.len_col or  row >= self.len_row:
+            return False
         return isinstance(self._arr[row][col], Wall)
 
     def is_not_eaten_food(self, col, row):

@@ -45,8 +45,7 @@ class Ghost(Movable):
         self.prev_x, self.prev_y = self.x, self.y
         self.set_velocity()
 
-        newX = self.x + self.x_vel
-        newY = self.y + self.y_vel
+        newX, newY = super().step()
 
         if not self.board.is_wall(newX, newY):
             self.x, self.y = newX, newY
