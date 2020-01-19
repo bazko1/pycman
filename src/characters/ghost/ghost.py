@@ -14,6 +14,9 @@ class Ghost(Movable):
     def frightened_state(self):
         self.state = "frightened"
 
+    def is_eaten(self):
+        return self.state == "eaten"
+
     def chase_state(self):
         self.state = "chase"
 
@@ -37,9 +40,14 @@ class Ghost(Movable):
         self.x_vel, self.y_vel = self.shortest_path()
 
     def step(self):
+        self.prev_x, self.prev_y = self.x, self.y
         self.set_velocity()
-        self.x += self.x_vel
-        self.y += self.y_vel
+        
+        newX = self.x + self.x_vel
+        newY = self.y + self.y_vel
+        
+        if not self.board.is_wall(newX, newY):
+            self.x, self.y = newX, newY
 
     def set_target(self):
         if self.state == "home":

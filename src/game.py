@@ -54,6 +54,7 @@ class Game:
 
     def start(self):
         self.clock = pygame.time.Clock()
+        started = False
         while True:
             curr = pygame.time.get_ticks()
             for event in pygame.event.get():
@@ -61,6 +62,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 elif event.type == pygame.KEYDOWN:
+                    started = True
                     if event.key == pygame.K_LEFT:
                         self.characters["pacman"].x_vel = -1
                         self.characters["pacman"].y_vel = 0
@@ -73,9 +75,10 @@ class Game:
                     elif event.key == pygame.K_UP:
                         self.characters["pacman"].x_vel = 0
                         self.characters["pacman"].y_vel = -1
-
-            self.step()
-            self.clock.tick_busy_loop(8)
+            if started:
+                self.clock.tick_busy_loop(7)
+                self.step()
+            
 
 
     def calculate_score(self, pacman):

@@ -1,5 +1,4 @@
 from abc import ABCMeta, abstractmethod
-
 from .point import Point
 
 
@@ -41,6 +40,7 @@ class Movable(Point, metaclass=ABCMeta):
             newX = 0
         elif newX == -1:
             newX = self.board.len_col - 1
+        
         return newX, newY
 
     def get_velocity(self):
@@ -50,6 +50,8 @@ class Movable(Point, metaclass=ABCMeta):
         """Checks if """
         pass
 
+    def is_ghost(self):
+        return self.name in ["blue", "red", "pink", "blue"]
 
     def get_prev(self):
         return self.prev_x, self.prev_y
