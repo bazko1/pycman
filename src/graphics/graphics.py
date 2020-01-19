@@ -26,15 +26,15 @@ class Graphics:
     def __init__(self, characters, board):
         self.characters = characters
         self.board = board
-        
+
         self.screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT + hOffupset))
         pygame.display.set_caption("pycman")
-        # Dictionary key is part name, value is either dictionary velocity : list of surfaces 
+        # Dictionary key is part name, value is either dictionary velocity : list of surfaces
         # or only list of surfaces, filled using load_characters_animations.
         self.animations = {}
         self.initialize_maze()
-        
-        
+
+
 
     def initialize_maze(self):
         """Draw initial maze look and characters on it"""
@@ -72,7 +72,7 @@ class Graphics:
                     # pygame.draw.rect(map_surface, (255, 255, 255), (x * 20, y * 20, food_image, base_rect_size, base_rect_size), 1)
 
                     if value == ".":
-                        map_surface.blit(food_small, (x * 20 + self.food_conf.small_offset, 
+                        map_surface.blit(food_small, (x * 20 + self.food_conf.small_offset,
                                                       y * 20 + self.food_conf.small_offset))
                     elif value == "o":
                         map_surface.blit(food_big, (x * 20 + self.food_conf.big_offset,
@@ -91,14 +91,14 @@ class Graphics:
 
     def load_characters_animations(self):
         """Fills dictionary with surfaces ready for each animation
-        
+
            Each character has supposedly has 4 types of animations (going left, right, up, down)
         """
         self.character_size = (26, 26)
-        
-        # Which animation should we display 
+
+        # Which animation should we display
         self.animation_state = 0
-        
+
         # Black rect of base size to redraw character
         self.black_rect = pygame.Surface(self.character_size)
         self.black_rect.fill((0, 0, 0))
@@ -112,18 +112,18 @@ class Graphics:
             path = os.path.join(os.getcwd(), f"data/baz/{character}.png")
             surface = pygame.image.load(path)
             self.animations[character] = {
-             location: self.get_character_images(character, location, surface, self.character_size) 
+             location: self.get_character_images(character, location, surface, self.character_size)
              for location in locations[character].keys()}
-        
+
     def get_character_images(self, name, velocity, image, resize=None):
         """Returs list of surfaces (animation)
-        
+
             Args:
                 name: key in dictionary with specific parts of image location
                 velocity: representation of left, right ..
                 image: image to extract subimages from
                 resize: tuple (width, height) to resize to after extracting
-        
+
         """
         out = [image.subsurface(rect) for rect in part_locations[name][velocity]]
         if resize is not None:
@@ -139,11 +139,11 @@ class Graphics:
         prev = character.get_prev()
         to_blit = []
         if None not in prev:
-            # if character.name in ["blue", "pink", "orange", "red", "cherry"]:
-                # self.redraw_food(*prev)
-            # else:
-            to_blit.append((self.black_rect, self.screen_position(*prev)))
-            # to_blit.append((self.black_rect, self.screen_position(*prev)))
+            if character.name in ["blue", "pink", "orange", "red", "cherry"] \
+               and self.board.is_not_eaten_food(*prev):
+                self.redraw_food(*prev)
+            else:
+                to_blit.append((self.black_rect, self.screen_position(*prev)))
 
 
         velocity = character.get_velocity()

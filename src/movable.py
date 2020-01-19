@@ -5,6 +5,8 @@ from .point import Point
 class Movable(Point, metaclass=ABCMeta):
     def __init__(self, x: int = None, y: int = None):
         Point.__init__(self, x, y)
+        self.initialX = x
+        self.initialY = y
         self.x_vel = 0
         self.y_vel = 0
         self.prev_x = None
