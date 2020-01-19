@@ -39,6 +39,8 @@ class Game:
 
         self.graphics = Graphics(self.characters, self.board)
 
+        #TODO: Set chase state to ghosts after n seconds
+        self.characters["red"].chase_state()
 
     def step(self):
         """Performs one tick of a game, updating all its objects"""
@@ -48,7 +50,8 @@ class Game:
             if name == "pacman":
                 # print('pacman x, y',self.characters["pacman"].getCords())
                 self.calculate_score(character)
-
+            if character.is_ghost():
+                character.set_target()
         self.graphics.update()
 
 
