@@ -79,7 +79,7 @@ class Game:
                         self.characters["pacman"].x_vel = 0
                         self.characters["pacman"].y_vel = -1
             if started:
-                self.clock.tick_busy_loop(7)
+                self.clock.tick_busy_loop(6)
                 self.step()
             
 

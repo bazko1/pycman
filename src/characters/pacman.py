@@ -10,6 +10,7 @@ class Pacman(Movable):
         self.eatenFood = 0
         # 50 points and new behaviour
         self.eatenSuperFood = 0
+        # TODO:  How many points ?
         self.eatenGhost = 0
         self.eatenCherry = 0
 
@@ -23,6 +24,7 @@ class Pacman(Movable):
             food.set_eaten()
             if food.is_super:
                 # TODO: Set correct number of steps for pacman to be super
+                self.eatenGhost += 1
                 self.on_stereoids = 40
 
         for movable in self.other_movable.values():
@@ -39,7 +41,7 @@ class Pacman(Movable):
                         self.die()
                         return
                 
-                # TODO: Prepare colloision with other movable (cherry)
+                # TODO: Prepare collision with other movable (cherry)
 
                     
         if self.on_stereoids != 0:
@@ -53,4 +55,3 @@ class Pacman(Movable):
     def die(self):
         self.x = self.initialX
         self.y = self.initialY
-        pass
