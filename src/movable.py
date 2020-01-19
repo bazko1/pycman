@@ -57,3 +57,14 @@ class Movable(Point, metaclass=ABCMeta):
 
     def get_prev(self):
         return self.prev_x, self.prev_y
+
+    def has_tail(self):
+        """Checks if other character is not right behind this"""
+        for movable in self.other_movable.values():
+            
+            if movable.x == self.prev_x and movable.y == self.prev_y:
+                if movable == self:
+                    return False
+                return True
+        
+        return False

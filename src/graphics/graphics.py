@@ -5,16 +5,17 @@ from src.characters import characters_factory
 
 
 FoodConfig = namedtuple('FoodConfig', ['small_size', 'big_size', 'small_offset', 'big_offset'])
-# screen offset for score printing
-hOffupset = 80
 
-# Maze is splitted in base_rect_size rects
-base_rect_size = 20
+
+# Maze is splitted in base_rect_size rects, should be dividible by 4
+base_rect_size = 28
 # Size of main maze
 # It can be splited to 28 x 31 base rectangles
 BOARD_HEIGHT = 31 * base_rect_size  # 620
 BOARD_WIDTH = 28 * base_rect_size # 560
 
+# screen offset for score printing
+hOffupset = BOARD_HEIGHT // 8
 
 class Graphics:
     """Graphics class for pacman
@@ -56,7 +57,10 @@ class Graphics:
 
         food_path = os.path.join(os.getcwd(), "data/baz/food.png")
         food_image = pygame.image.load(food_path)
-        self.food_conf = FoodConfig((5, 5), (16, 16), 7, 2)
+        small_size = base_rect_size // 4
+        big_size = base_rect_size - small_size
+        small_offset = base_rect_size // 2 - small_size // 2
+        self.food_conf = FoodConfig((small_size, small_size), (big_size, big_size), small_offset, base_rect_size//4)
         # TODO: Add food coords to defines
         food_small = pygame.transform.scale(food_image.subsurface((0, 16, 16, 16)), self.food_conf[0])
         food_big = pygame.transform.scale(food_image.subsurface((88, 6, 34, 34)), self.food_conf[1])
@@ -69,14 +73,14 @@ class Graphics:
         for y, row in enumerate(data):
                 for x, value in enumerate(row):
                     # For debuging draw rects
-                    # pygame.draw.rect(map_surface, (255, 255, 255), (x * 20, y * 20, food_image, base_rect_size, base_rect_size), 1)
+                    # pygame.draw.rect(map_surface, (255, 255, 255), (x * base_rect_size, y * base_rect_size, base_rect_size, base_rect_size), 1)
 
                     if value == ".":
-                        map_surface.blit(food_small, (x * 20 + self.food_conf.small_offset,
-                                                      y * 20 + self.food_conf.small_offset))
+                        map_surface.blit(food_small, (x * base_rect_size + self.food_conf.small_offset,
+                                                      y * base_rect_size + self.food_conf.small_offset))
                     elif value == "o":
-                        map_surface.blit(food_big, (x * 20 + self.food_conf.big_offset,
-                                                    y * 20 + self.food_conf.big_offset))
+                        map_surface.blit(food_big, (x * base_rect_size + self.food_conf.big_offset,
+                                                    y * base_rect_size + self.food_conf.big_offset))
 
 
         self.screen.blit(map_surface, (0, hOffupset))
@@ -94,7 +98,7 @@ class Graphics:
 
            Each character has supposedly has 4 types of animations (going left, right, up, down)
         """
-        self.character_size = (26, 26)
+        self.character_size = (base_rect_size, base_rect_size)
 
         # Which animation should we display
         self.animation_state = 0
@@ -102,6 +106,10 @@ class Graphics:
         # Black rect of base size to redraw character
         self.black_rect = pygame.Surface(self.character_size)
         self.black_rect.fill((0, 0, 0))
+
+
+        # self.base_rect = pygame.Surface((base_rect_size, base_rect_size))
+        # self.black_rect.fill((0, 0, 0))
 
         # TODO: Add blue when blue.png ready
         # characters =  self.characters.keys()
@@ -141,7 +149,8 @@ class Graphics:
         if None not in prev:
             if character.name in ["blue", "pink", "orange", "red", "cherry"] \
                and self.board.is_not_eaten_food(*prev):
-                self.redraw_food(*prev)
+                small = not self.board.get_element(*prev).is_super
+                to_blit += self.redraw_food(*prev, small)
             else:
                 to_blit.append((self.black_rect, self.screen_position(*prev)))
 
@@ -155,10 +164,10 @@ class Graphics:
     def redraw_food(self, x, y, small=True):
         to_blit = []
         offset = self.food_conf.small_offset if small else self.food_conf.big_offset
-        food = self.food_small
+        food = self.food_small if small else self.food_big
         to_blit.append((self.black_rect, self.screen_position(x, y)))
         to_blit.append((food, self.screen_position(x, y, offset)))
-        self.screen.blits(to_blit)
+        return to_blit
 
 
     def redraw_board(self, board, coordinates=None):

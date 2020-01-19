@@ -30,6 +30,8 @@ part_locations = {
                         
                     },
             
-            "blue": {}
+            "blue": {},
+
+            "eyes": {}
 
             }
