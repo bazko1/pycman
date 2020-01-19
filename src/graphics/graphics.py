@@ -8,7 +8,7 @@ FoodConfig = namedtuple('FoodConfig', ['small_size', 'big_size', 'small_offset',
 
 
 # Maze is splitted in base_rect_size rects, should be dividible by 4
-base_rect_size = 28
+base_rect_size = 4 * 7
 # Size of main maze
 # It can be splited to 28 x 31 base rectangles
 BOARD_HEIGHT = 31 * base_rect_size  # 620
@@ -41,7 +41,7 @@ class Graphics:
         """Draw initial maze look and characters on it"""
         self.draw_maze()
         self.load_characters_animations()
-        for character in ["red", "orange", "pink", "pacman"] : # TODO: Add blue
+        for character in ["red", "orange", "pink", "pacman", "blue"]:
             self.draw_character(self.characters[character])
         pygame.display.update()
 
@@ -58,9 +58,9 @@ class Graphics:
         food_path = os.path.join(os.getcwd(), "data/baz/food.png")
         food_image = pygame.image.load(food_path)
         small_size = base_rect_size // 4
-        big_size = base_rect_size - small_size
+        big_size = base_rect_size // 2
         small_offset = base_rect_size // 2 - small_size // 2
-        self.food_conf = FoodConfig((small_size, small_size), (big_size, big_size), small_offset, base_rect_size//4)
+        self.food_conf = FoodConfig((small_size, small_size), (big_size, big_size), small_offset, base_rect_size // 4)
         # TODO: Add food coords to defines
         food_small = pygame.transform.scale(food_image.subsurface((0, 16, 16, 16)), self.food_conf[0])
         food_big = pygame.transform.scale(food_image.subsurface((88, 6, 34, 34)), self.food_conf[1])
@@ -86,9 +86,9 @@ class Graphics:
         self.screen.blit(map_surface, (0, hOffupset))
 
     def update(self):
-        for character in ["red", "pacman", "orange", "pink"] : # TODO: Add blue
+        for character in ["red", "pacman", "orange", "pink", "blue"]: # TODO: cherry is not implemented yet
             self.draw_character(self.characters[character])
-        # self.draw_character(self.characters['pacman'])
+
         self.animation_state += 1
         self.animation_state %= 2
         pygame.display.update()
@@ -112,8 +112,8 @@ class Graphics:
         # self.black_rect.fill((0, 0, 0))
 
         # TODO: Add blue when blue.png ready
-        # characters =  self.characters.keys()
-        characters = ["pacman", "pink", "red", "orange", ] # "blue"
+        characters =  self.characters.keys()
+        characters = ["pacman", "pink", "red", "orange", "blue"] # TODO: cherry is not implemented yet
         locations = part_locations
 
         for character in characters:

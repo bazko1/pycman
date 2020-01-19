@@ -5,6 +5,7 @@ class GhostBlue(Ghost):
     def __init__(self):
         self.name = "blue"
         Ghost.__init__(self, 11, 14)
+        self.y_vel = -1
 
     def chase_state_target(self):
         pacman = self.other_movable["pacman"]
