@@ -45,10 +45,8 @@ class Game:
     def step(self):
         """Performs one tick of a game, updating all its objects"""
         for name, character in self.characters.items():
-
             newCords = character.step()
             if name == "pacman":
-                # print('pacman x, y',self.characters["pacman"].getCords())
                 self.calculate_score(character)
             if character.is_ghost():
                 character.set_target()
@@ -81,7 +79,7 @@ class Game:
                         self.characters["pacman"].x_vel = 0
                         self.characters["pacman"].y_vel = -1
             if started:
-                self.clock.tick_busy_loop(4)
+                self.clock.tick_busy_loop(6)
                 self.step()
                 if i < 21:
                     i+=1

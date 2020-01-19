@@ -13,7 +13,7 @@ class Pacman(Movable):
         # TODO:  How many points ?
         self.eatenGhost = 0
         self.eatenCherry = 0
-
+        self.ghosts = ["red", "blue", "pink", "orange"]
     def step(self):
         newX, newY = super().step()
         self.prev_x, self.prev_y = self.x, self.y
@@ -25,33 +25,46 @@ class Pacman(Movable):
             if food.is_super:
                 # TODO: Set correct number of steps for pacman to be super
                 self.eatenGhost += 1
+                for ghost_name in self.ghosts:
+                    ghost = self.other_movable[ghost_name]
+                    if not ghost.is_eaten():
+                        ghost.frightened_state()
                 self.on_stereoids = 40
 
         for movable in self.other_movable.values():
-            movableX, movableY = movable.getCords()
-            
-            #  There is collision with other movable
-            if self.x == movableX and self.y == movableY:
+            if movable == self:
+                continue
+            # FIXME: Not sure if this is right but if we check only prev or only actuall
+            # cords pacman is sometimes not eaten if moves dynamically
+            if self.getCords() == movable.getCords() or \
+               self.get_prev() == movable.get_prev(): 
                 if movable.is_ghost():
-                    if self.on_stereoids > 0 and not movable.is_eaten():
-                        movable.eaten_state()
-                        self.eatenGhost += 1
-                    else:
-                        # collision with living ghost and we are not on super food
-                        self.die()
-                        return
-                
+                    if not movable.is_eaten():
+                        if self.on_stereoids > 0:
+                            movable.eaten_state()
+                            self.eatenGhost += 1
+                        elif not movable.is_eaten():
+                            # collision with living ghost and we are not on super food
+                            self.die()
+                            return
+
                 # TODO: Prepare collision with other movable (cherry)
 
-                    
+
         if self.on_stereoids != 0:
             self.on_stereoids -= 1
+            if self.on_stereoids == 0:
+                for ghost_name in self.ghosts:
+                    ghost = self.other_movable[ghost_name]
+                    if ghost.is_frightened():
+                        ghost.chase_state()
+
 
         if not self.board.is_wall(newX, newY):
             self.x, self.y = newX, newY
 
         return self.x, self.y
-    
+
     def die(self):
         self.x = self.initialX
         self.y = self.initialY

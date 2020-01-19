@@ -14,6 +14,9 @@ class Ghost(Movable):
     def frightened_state(self):
         self.state = "frightened"
 
+    def is_frightened(self):
+        return self.state == "frightened"
+
     def is_eaten(self):
         return self.state == "eaten"
 
