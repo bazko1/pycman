@@ -53,11 +53,17 @@ class Ghost(Movable):
         if not self.board.is_wall(newX, newY):
             self.x, self.y = newX, newY
 
+        if self.x == self.initialX and \
+           self.y == self.initialY and \
+           self.state == "eaten":
+                self.state = "chase"
+
+
     def set_target(self):
         if self.state == "home":
             self.chase_state()
         elif self.state == "eaten":
-            pass
+            self.target_x, self.target_y = self.initialX, self.initialY
         elif self.state == "chase":
             self.chase_state_target()
         elif self.state == "frightened":
