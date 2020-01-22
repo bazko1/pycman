@@ -5,14 +5,13 @@ class Pacman(Movable):
     def __init__(self):
         Movable.__init__(self, 13, 23)
         self.name = "pacman"
+        self.x_vel = -1
         self.on_stereoids = 0
-        # 10 points
         self.eatenFood = 0
-        # 50 points and new behaviour
         self.eatenSuperFood = 0
-        # TODO:  How many points ?
         self.eatenGhost = 0
         self.eatenCherry = 0
+        self.lifes = 3
         self.ghosts = ["red", "blue", "pink", "orange"]
     def step(self):
         newX, newY = super().step()
@@ -68,3 +67,4 @@ class Pacman(Movable):
     def die(self):
         self.x = self.initialX
         self.y = self.initialY
+        self.lifes -= 1

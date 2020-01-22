@@ -19,7 +19,7 @@ class Game:
 
         maze = os.path.join(os.getcwd(), "data/map.txt")
         self.board = Board.from_file(maze)
-        
+        self.game_over = False
         Ghost = characters_factory.new_ghost
 
         self.characters = {"blue": Ghost("Blue"),
@@ -34,9 +34,8 @@ class Game:
             c.set_board(self.board)
             c.set_other_movable(self.characters)
 
-        #TODO: Remove - test if pacman walks correctly right and stops on wall
-        self.characters["pacman"].x_vel = 1
-
+        self.score = 0
+        self.pacman = self.characters["pacman"]
         self.graphics = Graphics(self.characters, self.board)
 
         #TODO: Set chase state to ghosts after n seconds
@@ -46,10 +45,13 @@ class Game:
         """Performs one tick of a game, updating all its objects"""
         for name, character in self.characters.items():
             newCords = character.step()
-            if name == "pacman":
-                self.calculate_score(character)
             if character.is_ghost():
                 character.set_target()
+        
+        self.update_score()
+        if self.pacman.lifes == 0:
+            self.game_over = True
+
         self.graphics.update()
 
 
@@ -78,7 +80,7 @@ class Game:
                     elif event.key == pygame.K_UP:
                         self.characters["pacman"].x_vel = 0
                         self.characters["pacman"].y_vel = -1
-            if started:
+            if started and not self.game_over:
                 self.clock.tick_busy_loop(6)
                 self.step()
                 if i < 21:
@@ -91,7 +93,8 @@ class Game:
                     pass
 
 
-    def calculate_score(self, pacman):
+    def update_score(self):
         """Calculates overall score based upon food pacman ate."""
-        #TODO:
-        pass
+        pacman = self.pacman
+        self.score = 10 * pacman.eatenFood + pacman.eatenSuperFood * 50
+        self.graphics.print_score(self.score)

@@ -6,7 +6,11 @@ class Ghost(Movable):
         super().__init__(x, y)
         self.target_x = 0
         self.target_y = 0
-        self.state = "Home"
+        self.state = "home"
+
+    @staticmethod
+    def all_ghost_names():
+        return ["blue", "red", "pink", "orange"]
 
     def eaten_state(self):
         self.state = "eaten"
@@ -50,7 +54,7 @@ class Ghost(Movable):
 
         newX, newY = super().step()
 
-        if not self.board.is_wall(newX, newY):
+        if not self.board.is_wall(newX, newY): #TODO: should we check for collision? and not self.on_ghost(newX, newY):
             self.x, self.y = newX, newY
 
         if self.x == self.initialX and \
@@ -71,3 +75,21 @@ class Ghost(Movable):
 
     def chase_state_target(self):
         return
+
+    def on_ghost(self, newX, newY):
+    
+        # check if ghost do not walk on each other
+        for ghost_name in Ghost.all_ghost_names():
+            ghost = self.other_movable[ghost_name]
+            if ghost == self or ghost.state == "eaten":
+                continue
+            
+            if (newX == ghost.x and newY == ghost.y) or \
+                (newX == ghost.prev_x and newY == ghost.prev_y):
+                return True
+        
+        return False
+
+    def is_in_base(self):
+        return 16 >= self.x >= 11 and 15 >= self.y >= 13
+        

@@ -33,8 +33,10 @@ class Graphics:
         # Dictionary key is part name, value is either dictionary velocity : list of surfaces
         # or only list of surfaces, filled using load_characters_animations.
         self.animations = {}
+        self.other_images = {}
         self.initialize_maze()
-
+        
+        
 
 
     def initialize_maze(self):
@@ -43,6 +45,10 @@ class Graphics:
         self.load_characters_animations()
         for character in ["red", "orange", "pink", "pacman", "blue"]:
             self.draw_character(self.characters[character])
+        
+        self.load_other_images()
+        self.print_score(0)
+
         pygame.display.update()
 
     def draw_maze(self):
@@ -127,6 +133,12 @@ class Graphics:
             else:
                 self.animations[character] = self.get_character_images(character, None, surface, self.character_size)
     
+    def load_other_images(self):
+        for image in ["numbers",]:
+            path = os.path.join(os.getcwd(), f"data/baz/{image}.png")
+            surface = pygame.image.load(path)
+            self.other_images[image] = self.get_character_images(image, None, surface, (base_rect_size, base_rect_size))
+
     def get_character_images(self, name, velocity, image, resize=None):
         """Returs list of surfaces (animation)
 
@@ -191,6 +203,22 @@ class Graphics:
         to_blit.append((food, self.screen_position(x, y, offset)))
         return to_blit
 
+
+    def print_score(self, score):
+        # map_surface.blits
+        xoffset = 10
+        start_x = BOARD_WIDTH / 2
+        y = hOffupset - 2 * base_rect_size
+        numbers = self.other_images["numbers"]
+        to_blit = []
+        for index, digit in enumerate([int(x) for x in str(score)]):
+            pos = (start_x + base_rect_size * index + xoffset, y)
+            to_blit.append((self.black_rect, pos))
+            to_blit.append((numbers[digit], pos))
+        
+        self.screen.blits(to_blit)
+        
+        pass
 
     def redraw_board(self, board, coordinates=None):
         """Redraws full board or specific points on it
