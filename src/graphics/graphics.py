@@ -207,12 +207,12 @@ class Graphics:
     def print_score(self, score):
         # map_surface.blits
         xoffset = 10
-        start_x = BOARD_WIDTH / 2
-        y = hOffupset - 2 * base_rect_size
+        start_x = BOARD_WIDTH // 4
+        y = hOffupset - base_rect_size
         numbers = self.other_images["numbers"]
         to_blit = []
         for index, digit in enumerate([int(x) for x in str(score)]):
-            pos = (start_x + base_rect_size * index + xoffset, y)
+            pos = (start_x + (base_rect_size + xoffset) * index, y)
             to_blit.append((self.black_rect, pos))
             to_blit.append((numbers[digit], pos))
         
