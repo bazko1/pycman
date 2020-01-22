@@ -70,7 +70,7 @@ class Graphics:
         f = open(os.path.join(os.getcwd(), "data/map.txt"), "r")
         data = f.read().splitlines()
         f.close()
-        
+
         for y, row in enumerate(data):
                 for x, value in enumerate(row):
                     # For debuging draw rects
@@ -114,16 +114,19 @@ class Graphics:
 
         # TODO: Add blue when blue.png ready
         characters =  self.characters.keys()
-        characters = ["pacman", "pink", "red", "orange", "blue", "eyes"] # TODO: cherry is not implemented yet
+        characters = ["pacman", "pink", "red", "orange", "blue", "eyes", "scared"] # TODO: cherry is not implemented yet
         locations = part_locations
 
         for character in characters:
             path = os.path.join(os.getcwd(), f"data/baz/{character}.png")
             surface = pygame.image.load(path)
-            self.animations[character] = {
-             location: self.get_character_images(character, location, surface, self.character_size)
-             for location in locations[character].keys()}
-
+            if isinstance(locations[character], dict):
+                self.animations[character] = {
+                location: self.get_character_images(character, location, surface, self.character_size)
+                for location in locations[character].keys()}
+            else:
+                self.animations[character] = self.get_character_images(character, None, surface, self.character_size)
+    
     def get_character_images(self, name, velocity, image, resize=None):
         """Returs list of surfaces (animation)
 
@@ -134,7 +137,13 @@ class Graphics:
                 resize: tuple (width, height) to resize to after extracting
 
         """
-        out = [image.subsurface(rect) for rect in part_locations[name][velocity]]
+        
+        data = part_locations[name]
+        
+        if velocity is not None:
+            data = data[velocity]
+        
+        out = [image.subsurface(rect) for rect in data]
         if resize is not None:
             out = [pygame.transform.scale(surface, resize) for surface in out]
         return out
@@ -157,10 +166,19 @@ class Graphics:
 
 
         velocity = character.get_velocity()
-        if character.is_ghost() and character.is_eaten():
-            animation = self.animations["eyes"][velocity]
+        if character.is_ghost():
+            pacman = self.characters["pacman"]
+            if character.is_eaten():
+                animation = self.animations["eyes"][velocity]
+            elif 20 >= pacman.on_stereoids > 0:
+                animation = self.animations["scared"][0:2]
+            elif 40 > pacman.on_stereoids > 20:
+                animation = self.animations["scared"][2:4]
+            else:
+                animation = self.animations[character.name][velocity]
         else:
             animation = self.animations[character.name][velocity]
+
         screen_position = self.screen_position(x, y)
         to_blit.append((animation[self.animation_state], screen_position))
         self.screen.blits(to_blit)

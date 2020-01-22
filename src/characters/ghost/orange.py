@@ -23,4 +23,4 @@ class GhostOrange(Ghost):
             self.target_y = pacman.y
         else:
             self.target_x = 0
-            self.target_y = len(self.board) + 5
+            self.target_y = self.board.len_row + 5

@@ -53,7 +53,7 @@ class Movable(Point, metaclass=ABCMeta):
         pass
 
     def is_ghost(self):
-        return self.name in ["blue", "red", "pink", "blue"]
+        return self.name in ["blue", "red", "pink", "orange"]
 
     def get_prev(self):
         return self.prev_x, self.prev_y
