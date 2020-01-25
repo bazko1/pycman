@@ -8,7 +8,7 @@ FoodConfig = namedtuple('FoodConfig', ['small_size', 'big_size', 'small_offset',
 
 
 # Maze is splitted in base_rect_size rects, should be dividible by 4
-base_rect_size = 4 * 7
+base_rect_size = 4 * 6
 # Size of main maze
 # It can be splited to 28 x 31 base rectangles
 BOARD_HEIGHT = 31 * base_rect_size  # 620
@@ -27,7 +27,7 @@ class Graphics:
     def __init__(self, characters, board):
         self.characters = characters
         self.board = board
-
+        self.game_over = False
         self.screen = pygame.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT + hOffupset))
         pygame.display.set_caption("pycman")
         # Dictionary key is part name, value is either dictionary velocity : list of surfaces
@@ -35,9 +35,6 @@ class Graphics:
         self.animations = {}
         self.other_images = {}
         self.initialize_maze()
-        
-        
-
 
     def initialize_maze(self):
         """Draw initial maze look and characters on it"""
@@ -45,8 +42,11 @@ class Graphics:
         self.load_characters_animations()
         for character in ["red", "orange", "pink", "pacman", "blue"]:
             self.draw_character(self.characters[character])
-        
+
         self.load_other_images()
+
+        self.print_text("score", x = BOARD_WIDTH // 4 - 6 * base_rect_size, y = hOffupset - base_rect_size)
+        self.print_text("best", x = BOARD_WIDTH // 2 - 2 * base_rect_size, y = 4)
         self.print_score(0)
 
         pygame.display.update()
@@ -93,11 +93,13 @@ class Graphics:
         self.screen.blit(map_surface, (0, hOffupset))
 
     def update(self):
-        for character in ["red", "pacman", "orange", "pink", "blue"]: # TODO: cherry is not implemented yet
-            self.draw_character(self.characters[character])
+        if not self.game_over:
+            for character in ["red", "pacman", "orange", "pink", "blue"]: # TODO: cherry is not implemented yet
+                self.draw_character(self.characters[character])
 
-        self.animation_state += 1
-        self.animation_state %= 2
+            self.animation_state += 1
+            self.animation_state %= 2
+
         pygame.display.update()
 
     def load_characters_animations(self):
@@ -114,11 +116,6 @@ class Graphics:
         self.black_rect = pygame.Surface(self.character_size)
         self.black_rect.fill((0, 0, 0))
 
-
-        # self.base_rect = pygame.Surface((base_rect_size, base_rect_size))
-        # self.black_rect.fill((0, 0, 0))
-
-        # TODO: Add blue when blue.png ready
         characters =  self.characters.keys()
         characters = ["pacman", "pink", "red", "orange", "blue", "eyes", "scared"] # TODO: cherry is not implemented yet
         locations = part_locations
@@ -132,12 +129,15 @@ class Graphics:
                 for location in locations[character].keys()}
             else:
                 self.animations[character] = self.get_character_images(character, None, surface, self.character_size)
-    
+
     def load_other_images(self):
         for image in ["numbers",]:
             path = os.path.join(os.getcwd(), f"data/baz/{image}.png")
             surface = pygame.image.load(path)
             self.other_images[image] = self.get_character_images(image, None, surface, (base_rect_size, base_rect_size))
+
+        path = os.path.join(os.getcwd(), f"data/baz/letters.png")
+        self.letters = pygame.image.load(path)
 
     def get_character_images(self, name, velocity, image, resize=None):
         """Returs list of surfaces (animation)
@@ -149,12 +149,12 @@ class Graphics:
                 resize: tuple (width, height) to resize to after extracting
 
         """
-        
+
         data = part_locations[name]
-        
+
         if velocity is not None:
             data = data[velocity]
-        
+
         out = [image.subsurface(rect) for rect in data]
         if resize is not None:
             out = [pygame.transform.scale(surface, resize) for surface in out]
@@ -204,21 +204,52 @@ class Graphics:
         return to_blit
 
 
-    def print_score(self, score):
-        # map_surface.blits
+    def print_score(self, score, x = BOARD_WIDTH // 4, y = hOffupset - base_rect_size):
         xoffset = 10
-        start_x = BOARD_WIDTH // 4
-        y = hOffupset - base_rect_size
+
+        start_x = x
         numbers = self.other_images["numbers"]
         to_blit = []
         for index, digit in enumerate([int(x) for x in str(score)]):
             pos = (start_x + (base_rect_size + xoffset) * index, y)
             to_blit.append((self.black_rect, pos))
             to_blit.append((numbers[digit], pos))
-        
+
         self.screen.blits(to_blit)
-        
+
         pass
+
+    def print_text(self, text, x=0, y=0, size=base_rect_size, offset = 10):
+        to_blit = []
+        text = text.lower()
+        letter_w = self.letters.get_width() // 26
+        letter_h = self.letters.get_height()
+
+        for index, letter in enumerate(text):
+            num = (ord(letter) - 97) % 26
+            rect = (num * letter_w, 0, letter_w, letter_h)
+            surface = pygame.transform.scale(self.letters.subsurface(rect), (size, size))
+
+            pos = (x + index * size, y)
+            erase = (pygame.transform.scale(self.black_rect, (size, size)), pos)
+            to_blit.append(erase)
+            to_blit.append((surface, pos))
+
+
+        self.screen.blits(to_blit)
+
+    def print_game_over(self):
+        self.game_over = True
+        x, y = self.screen_position(10, 13)
+        self.print_text("GAME", x=x, y=y)
+        x, y = self.screen_position(15, 13)
+        self.print_text("OVER", x=x, y=y)
+        pass
+
+    def print_best_score(self, score):
+        x, y = BOARD_WIDTH // 2 + 3 * base_rect_size , 4
+        self.print_score(score, x=x, y=y)
+        pygame.display.update()
 
     def redraw_board(self, board, coordinates=None):
         """Redraws full board or specific points on it

@@ -61,6 +61,15 @@ class Board:
     def get_element(self, col, row):
         return self._arr[row][col]
 
+    def reset(self):
+        """Reset board to initial state"""
+        for row in self._arr:
+            for el in row:
+                if isinstance(el, Food):
+                    el.eaten = False
+        
+        self.close_gate()
+
     def open_gate(self):
         """"Open ghosts gate
         
