@@ -258,3 +258,7 @@ class Graphics:
            Then when it leaves specific field we want to redraw it without food
         """
         pass
+
+    def print_pacman_lifes(lifes_num , x, y):
+        # TODO
+        pass

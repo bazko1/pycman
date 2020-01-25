@@ -128,7 +128,7 @@ class Game:
     def update_score(self):
         """Calculates overall score based upon food pacman ate."""
         pacman = self.pacman
-        self.score = 10 * pacman.eatenFood + pacman.eatenSuperFood * 50
+        self.score = 10 * pacman.eatenFood + pacman.eatenSuperFood * 50 + pacman.eatenGhost * 200
         # Current score
         self.graphics.print_score(self.score)
         if self.game_over:

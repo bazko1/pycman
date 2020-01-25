@@ -12,6 +12,7 @@ class Pacman(Movable):
         self.eatenGhost = 0
         self.eatenCherry = 0
         self.lifes = 3
+        self.spree = 0
         self.ghosts = ["red", "blue", "pink", "orange"]
     def step(self):
         newX, newY = super().step()
@@ -41,7 +42,8 @@ class Pacman(Movable):
                     if not movable.is_eaten():
                         if self.on_stereoids > 0:
                             movable.eaten_state()
-                            self.eatenGhost += 1
+                            self.spree+=1
+                            self.eatenGhost += 1 * self.spree
                         elif not movable.is_eaten():
                             # collision with living ghost and we are not on super food
                             self.die()
@@ -53,6 +55,7 @@ class Pacman(Movable):
         if self.on_stereoids != 0:
             self.on_stereoids -= 1
             if self.on_stereoids == 0:
+                self.spree = 0
                 for ghost_name in self.ghosts:
                     ghost = self.other_movable[ghost_name]
                     if ghost.is_frightened():

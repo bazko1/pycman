@@ -7,6 +7,8 @@ class Ghost(Movable):
         self.target_x = 0
         self.target_y = 0
         self.state = "home"
+        # target just outside home
+        self.out = (15, 11)
 
     @staticmethod
     def all_ghost_names():
@@ -60,12 +62,16 @@ class Ghost(Movable):
         if self.x == self.initialX and \
            self.y == self.initialY and \
            self.state == "eaten":
-                self.state = "chase"
+                self.state = "home"
+        
+        if (self.x, self.y) == self.out and self.state != "eaten":
+            self.chase_state()
 
 
     def set_target(self):
         if self.state == "home":
-            self.chase_state()
+            self.target_x, self.target_y = self.out
+            # self.chase_state()
         elif self.state == "eaten":
             self.target_x, self.target_y = self.initialX, self.initialY
         elif self.state == "chase":
