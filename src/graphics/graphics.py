@@ -244,21 +244,30 @@ class Graphics:
         self.print_text("GAME", x=x, y=y)
         x, y = self.screen_position(15, 13)
         self.print_text("OVER", x=x, y=y)
-        pass
 
     def print_best_score(self, score):
         x, y = BOARD_WIDTH // 2 + 3 * base_rect_size , 4
         self.print_score(score, x=x, y=y)
         pygame.display.update()
 
-    def redraw_board(self, board, coordinates=None):
-        """Redraws full board or specific points on it
+    def print_pacman_lifes(self, lifes_num , x=None, y=None):
+        """Print num of pacman images at desired destination
 
-           Will be mostly used in case pacman eaten a food on its way.
-           Then when it leaves specific field we want to redraw it without food
+           Saves last x, y to use for lifes update (see pacman_lifes_minus)
         """
-        pass
+        to_blit = []
+        x = BOARD_WIDTH // 4 - 6 * base_rect_size or x
+        y = hOffupset // 4 or y
+        image = self.animations["pacman"][(1, 0)][0]
+        for nr in range(lifes_num):
+            cords = (nr * image.get_width() + x, y)
+            to_blit.append((image, cords))
 
-    def print_pacman_lifes(lifes_num , x, y):
-        # TODO
-        pass
+        self.lifes_last_cords = list(cords)
+
+        self.screen.blits(to_blit)
+        pygame.display.update()
+
+    def pacman_life_minus(self, num=1):
+        self.screen.blit(self.black_rect, self.lifes_last_cords)
+        self.lifes_last_cords[0] -= self.black_rect.get_width()

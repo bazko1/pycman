@@ -59,11 +59,12 @@ class Game:
                 self.best_score = 0
 
         self.graphics.print_best_score(self.best_score)
-        
+        self.graphics.print_pacman_lifes(self.pacman.lifes)
         self.board.open_gate()
 
     def step(self):
         """Performs one tick of a game, updating all its objects"""
+        prev_lifes_nr = self.pacman.lifes
         for name, character in self.characters.items():
             newCords = character.step()
             if character.is_ghost():
@@ -75,6 +76,8 @@ class Game:
             self.game_over = True
 
         self.update_score()
+        if self.pacman.lifes != prev_lifes_nr:
+            self.graphics.pacman_life_minus()
 
         self.graphics.update()
 
