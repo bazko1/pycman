@@ -63,10 +63,13 @@ class Ghost(Movable):
            self.y == self.initialY and \
            self.state == "eaten":
                 self.state = "home"
-        
+
         if (self.x, self.y) == self.out and self.state != "eaten":
             self.chase_state()
 
+        # Hack to not redraw board
+        if self.x in (13, 14) and self.y == 12:
+            self.y += self.y_vel
 
     def set_target(self):
         if self.state == "home":
@@ -83,19 +86,19 @@ class Ghost(Movable):
         return
 
     def on_ghost(self, newX, newY):
-    
+
         # check if ghost do not walk on each other
         for ghost_name in Ghost.all_ghost_names():
             ghost = self.other_movable[ghost_name]
             if ghost == self or ghost.state == "eaten":
                 continue
-            
+
             if (newX == ghost.x and newY == ghost.y) or \
                 (newX == ghost.prev_x and newY == ghost.prev_y):
                 return True
-        
+
         return False
 
     def is_in_base(self):
         return 16 >= self.x >= 11 and 15 >= self.y >= 13
-        
+
