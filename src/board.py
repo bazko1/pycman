@@ -73,15 +73,19 @@ class Board:
     def open_gate(self):
         """"Open ghosts gate
         
-            Wall in coords (13, 12) becomes 0
+            Wall in coords (13/14, 12) becomes 0
         """
-        print('OPEN THE GATE!')
         self._arr[12][13] = 0
         self._arr[12][14] = 0
 
     def close_gate(self):
         """"Close ghosts gate
         
-            Wall in coords (13, 12) becomes Wall
+            Wall in coords (13/14, 12) becomes Wall
         """
         self._arr[12][13] = Wall()
+        self._arr[12][14] = Wall()
+
+    def is_gate_closed(self) -> bool:
+        return isinstance(self._arr[12][13], Wall) and \
+               isinstance(self._arr[12][14], Wall)

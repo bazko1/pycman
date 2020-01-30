@@ -8,7 +8,7 @@ class Ghost(Movable):
         self.target_y = 0
         self.state = "home"
         # target just outside home
-        self.out = (15, 11)
+        self.out = (14, 11)
 
     @staticmethod
     def all_ghost_names():
@@ -59,16 +59,13 @@ class Ghost(Movable):
         if not self.board.is_wall(newX, newY): #TODO: should we check for collision? and not self.on_ghost(newX, newY):
             self.x, self.y = newX, newY
 
-        if self.x == self.initialX and \
-           self.y == self.initialY and \
-           self.state == "eaten":
-                self.state = "home"
-
-        if (self.x, self.y) == self.out and self.state != "eaten":
+        if self.is_in_base():
+            self.state = "home"
+        elif self.state != "eaten":
             self.chase_state()
 
         # Hack to not redraw board
-        if self.x in (13, 14) and self.y == 12:
+        if self.x in (13, 14) and self.y == 12 and not self.board.is_gate_closed():
             self.y += self.y_vel
 
     def set_target(self):
@@ -102,3 +99,5 @@ class Ghost(Movable):
     def is_in_base(self):
         return 16 >= self.x >= 11 and 15 >= self.y >= 13
 
+    def set_home(self):
+        self.x, self.y = self.initialX, self.initialY

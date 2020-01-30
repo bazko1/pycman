@@ -3,6 +3,7 @@ from .board import Board
 from .graphics.graphics import Graphics
 from src.characters import characters_factory
 
+
 class Game:
     """Class joining game logic and graphics. Started should output fully playable game.
 
@@ -35,6 +36,8 @@ class Game:
                            "cherry": characters_factory.Cherry()
                           }
 
+        self.ghosts = [self.characters[name] for name in ["blue", "pink", "red", "orange"]]
+
         for c in self.characters.values():
             c.set_board(self.board)
             c.set_other_movable(self.characters)
@@ -60,7 +63,7 @@ class Game:
 
         self.graphics.print_best_score(self.best_score)
         self.graphics.print_pacman_lifes(self.pacman.lifes)
-        self.board.open_gate()
+        self.i = 0
 
     def step(self):
         """Performs one tick of a game, updating all its objects"""
@@ -70,7 +73,6 @@ class Game:
             if character.is_ghost():
                 character.set_target()
 
-
         if self.pacman.lifes == 0:
             self.graphics.print_game_over()
             self.game_over = True
@@ -78,6 +80,10 @@ class Game:
         self.update_score()
         if self.pacman.lifes != prev_lifes_nr:
             self.graphics.pacman_life_minus()
+            for ghost in self.ghosts:
+                ghost.set_home()
+                self.i = 0
+                self.board.close_gate()
 
         self.graphics.update()
 
@@ -88,7 +94,6 @@ class Game:
 
 
     def main_loop(self):
-        i = 0
         while True:
             curr = pygame.time.get_ticks()
             for event in pygame.event.get():
@@ -115,14 +120,14 @@ class Game:
             if self.started and not self.game_over:
                 self.clock.tick_busy_loop(5)
                 self.step()
-                if i < 21:
-                    i+=1
+                if self.i < 21:
+                    self.i+=1
 
-                if i == 20:
+                if self.i == 20:
                     #free another ghost wall y=12, x=13 , 14 dissapear
                     # FIXME: If we open gate not instantly ghost do not leave box
-                    # self.board.open_gate()
-                    pass
+                    self.board.open_gate()
+                    
 
     def restart(self):
         self.initialize()
