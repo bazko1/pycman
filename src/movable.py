@@ -11,6 +11,8 @@ class Movable(Point, metaclass=ABCMeta):
         self.y_vel = 0
         self.prev_x = None
         self.prev_y = None
+        self.prev_x_vel = None
+        self.prev_y_vel = None
         self.board = None
         self.other_movable = None
 
@@ -42,7 +44,7 @@ class Movable(Point, metaclass=ABCMeta):
             newX = 0
         elif newX == -1:
             newX = self.board.len_col - 1
-        
+
         return newX, newY
 
     def get_velocity(self):
@@ -58,13 +60,17 @@ class Movable(Point, metaclass=ABCMeta):
     def get_prev(self):
         return self.prev_x, self.prev_y
 
+    def set_velocity(self, velocity):
+        self.prev_x_vel, self.prev_y_vel = self.get_velocity()
+        self.x_vel, self.y_vel = velocity
+
     def has_tail(self):
         """Checks if other character is not right behind this"""
         for movable in self.other_movable.values():
-            
+
             if movable.x == self.prev_x and movable.y == self.prev_y:
                 if movable == self:
                     return False
                 return True
-        
+
         return False

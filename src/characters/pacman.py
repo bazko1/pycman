@@ -27,7 +27,7 @@ class Pacman(Movable):
             if food.is_super:
                 # TODO: Set correct number of steps for pacman to be super
                 self.on_stereoids = self.STEREOIDS_MAX_TIME
-        
+
         if self.on_stereoids > 0:
             for ghost_name in self.ghosts:
                     ghost = self.other_movable[ghost_name]

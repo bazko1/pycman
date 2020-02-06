@@ -103,17 +103,13 @@ class Game:
                 elif event.type == pygame.KEYDOWN:
                     self.started = True
                     if event.key == pygame.K_LEFT:
-                        self.characters["pacman"].x_vel = -1
-                        self.characters["pacman"].y_vel = 0
+                        self.pacman.set_velocity((-1,0))
                     elif event.key == pygame.K_RIGHT:
-                        self.characters["pacman"].x_vel = 1
-                        self.characters["pacman"].y_vel = 0
+                        self.pacman.set_velocity((1,0))
                     elif event.key == pygame.K_DOWN:
-                        self.characters["pacman"].x_vel = 0
-                        self.characters["pacman"].y_vel = 1
+                        self.pacman.set_velocity((0,1))
                     elif event.key == pygame.K_UP:
-                        self.characters["pacman"].x_vel = 0
-                        self.characters["pacman"].y_vel = -1
+                        self.pacman.set_velocity((0,-1))
                     elif event.key == pygame.K_SPACE and self.game_over:
                         self.restart()
 
@@ -127,7 +123,7 @@ class Game:
                     #free another ghost wall y=12, x=13 , 14 dissapear
                     # FIXME: If we open gate not instantly ghost do not leave box
                     self.board.open_gate()
-                    
+
 
     def restart(self):
         self.initialize()
