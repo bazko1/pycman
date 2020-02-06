@@ -61,7 +61,7 @@ class Ghost(Movable):
 
         if self.is_in_base():
             self.state = "home"
-        elif self.state != "eaten":
+        elif self.state != "eaten" and self.state != "frightened":
             self.chase_state()
 
         # Hack to not redraw board
@@ -71,16 +71,28 @@ class Ghost(Movable):
     def set_target(self):
         if self.state == "home":
             self.target_x, self.target_y = self.out
-            # self.chase_state()
         elif self.state == "eaten":
             self.target_x, self.target_y = self.initialX, self.initialY
         elif self.state == "chase":
             self.chase_state_target()
         elif self.state == "frightened":
-            pass
-
+            self.frightened_state_target()
     def chase_state_target(self):
         return
+
+    def frightened_state_target(self):
+        """Sets target to oposite edge of a map where pacman is"""
+        pacman = self.other_movable["pacman"]
+        XMAX, YMAX = self.board.len_col, self.board.len_row
+
+        center_x, center_y = XMAX//2, YMAX//2
+
+        pacman_x, pacman_y = pacman.getCords()
+
+        self.target_x = 0 if pacman_x >= center_x else XMAX
+        self.target_y = 0 if pacman_y >= center_y else YMAX
+
+        pass
 
     def on_ghost(self, newX, newY):
 

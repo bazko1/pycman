@@ -182,9 +182,9 @@ class Graphics:
             pacman = self.characters["pacman"]
             if character.is_eaten():
                 animation = self.animations["eyes"][velocity]
-            elif 20 >= pacman.on_stereoids > 0:
+            elif pacman.STEREOIDS_MAX_TIME // 2 >= pacman.on_stereoids > 0:
                 animation = self.animations["scared"][0:2]
-            elif 40 > pacman.on_stereoids > 20:
+            elif pacman.STEREOIDS_MAX_TIME > pacman.on_stereoids > pacman.STEREOIDS_MAX_TIME // 2:
                 animation = self.animations["scared"][2:4]
             else:
                 animation = self.animations[character.name][velocity]

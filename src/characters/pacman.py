@@ -2,6 +2,8 @@ from src.movable import Movable
 
 
 class Pacman(Movable):
+    STEREOIDS_MAX_TIME = 100
+
     def __init__(self):
         Movable.__init__(self, 13, 23)
         self.name = "pacman"
@@ -24,12 +26,13 @@ class Pacman(Movable):
             food.set_eaten()
             if food.is_super:
                 # TODO: Set correct number of steps for pacman to be super
-                self.eatenGhost += 1
-                for ghost_name in self.ghosts:
+                self.on_stereoids = self.STEREOIDS_MAX_TIME
+        
+        if self.on_stereoids > 0:
+            for ghost_name in self.ghosts:
                     ghost = self.other_movable[ghost_name]
                     if not ghost.is_eaten():
                         ghost.frightened_state()
-                self.on_stereoids = 40
 
         for movable in self.other_movable.values():
             if movable == self:
@@ -37,12 +40,12 @@ class Pacman(Movable):
             # FIXME: Not sure if this is right but if we check only prev or only actuall
             # cords pacman is sometimes not eaten if moves dynamically
             if self.getCords() == movable.getCords() or \
-               self.get_prev() == movable.get_prev(): 
+               self.get_prev() == movable.get_prev():
                 if movable.is_ghost():
                     if not movable.is_eaten():
                         if self.on_stereoids > 0:
                             movable.eaten_state()
-                            self.spree+=1
+                            self.spree += 1
                             self.eatenGhost += 1 * self.spree
                         elif not movable.is_eaten():
                             # collision with living ghost and we are not on super food
